@@ -3,12 +3,9 @@ from flask_mysqldb import MySQL
 import MySQLdb.cursors
 from werkzeug.security import generate_password_hash, check_password_hash
 import base64
-import os
-from pathlib import Path
 
 app = Flask(__name__)
-# Load secret key from environment with a safe fallback for local development
-app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret')
+app.secret_key = 'dev-secret'
 
 # MySQL configuration
 app.config['MYSQL_HOST'] = 'localhost'
@@ -16,20 +13,14 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'vanciklinv1'
 
-# Cache logo at startup to avoid opening the file on every request
-_logo_path = Path('static') / 'images' / 'logo.png'
-try:
-    with _logo_path.open('rb') as _img:
-        APP_LOGO_BASE64 = base64.b64encode(_img.read()).decode('utf-8')
-except Exception:
-    APP_LOGO_BASE64 = ''
-
 mysql = MySQL(app)
 
 #Inject logo as base64 for all templates
 @app.context_processor
 def inject_logo():
-    return dict(logo_base64=APP_LOGO_BASE64)
+    with open("static/images/logo.png", "rb") as img:
+        logo = base64.b64encode(img.read()).decode("utf-8")
+    return dict(logo_base64=logo)
 
 @app.route('/')
 def home():
