@@ -138,5 +138,12 @@ def updateprofile():
         flash('Please log in to access this page.', 'danger')
         return redirect(url_for('login'))
 
+@app.route('/customers')
+def customers():
+    if 'loggedin' in session:
+        title = "Customers"
+        return render_template('customers.html', title=title)
+    else:
+        return redirect(url_for('login'))
 if __name__ == '__main__':
     app.run(debug=True)
