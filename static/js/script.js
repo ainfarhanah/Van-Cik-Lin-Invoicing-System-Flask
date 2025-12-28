@@ -12,3 +12,7 @@ window.addEventListener('load', () => {
         spinnerWrapperEl.style.display = 'none';
     }, 200);
 });
+/* DataTable */
+$(document).ready(function () {
+    $('#customerTable').DataTable();
+});

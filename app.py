@@ -146,9 +146,9 @@ def customers():
         title = "Customers"
 
         if request.method == 'POST':
-            custName = request.form.get('custName')
-            custPhone = request.form.get('custPhone')
-            custLocation = request.form.get('custLocation')
+            custName = request.form['custName']
+            custPhone = request.form['custPhone']
+            custLocation = request.form['custLocation']
 
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute("INSERT INTO customers (custName, custPhone, custLocation,userID) VALUES (%s, %s, %s,%s)", (custName, custPhone, custLocation, user_id))
@@ -162,5 +162,36 @@ def customers():
         return render_template('customers.html', title=title, customers=customers)
     else:
         return redirect(url_for('login'))
+
+@app.route('/customer/update/<int:custID>', methods=['POST'])
+def update_customer(custID):
+    if 'loggedin' in session:
+        title = "Update Customer"
+        custName = request.form['custName']
+        custPhone = request.form['custPhone']
+        custLocation = request.form['custLocation']
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("""
+        UPDATE customers SET custName=%s, custPhone=%s, custLocation=%s 
+        WHERE custID=%s""", (custName, custPhone, custLocation, custID))
+        mysql.connection.commit()
+        cursor.close()
+        flash('Customer updated successfully.', 'success')
+        return redirect(url_for('customers'))
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/customer/delete/<int:custID>', methods=['POST'])
+def delete_customer(custID):
+    if 'loggedin' in session:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("DELETE FROM customers WHERE custID = %s", (custID,))
+        mysql.connection.commit()
+        cursor.close()
+        flash('Customer deleted successfully.', 'success')
+        return redirect(url_for('customers'))
+    else:
+        return redirect(url_for('login'))
+        
 if __name__ == '__main__':
     app.run(debug=True)
