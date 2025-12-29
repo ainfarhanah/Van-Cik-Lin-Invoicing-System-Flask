@@ -217,6 +217,47 @@ def services():
         return render_template('services.html', title=title, services=services)
     else:
         return redirect(url_for('login'))
-        
+
+@app.route('/service/update/<int:serviceID>', methods=['POST'])
+def update_service(serviceID):
+    if 'loggedin' in session:
+        title = "Update Service"
+        user_id = session['id']
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("SELECT * FROM services WHERE serviceID = %s", (serviceID,))
+        service = cursor.fetchone()
+        cursor.close()
+
+        if request.method == 'POST':
+            serviceName = request.form['serviceName']
+            serviceDesc = request.form['serviceDesc']
+            serviceFee = request.form['serviceFee']
+            serviceStatus = request.form['serviceStatus']
+
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute("""
+            UPDATE services SET serviceName=%s, serviceDesc=%s, serviceFee=%s, serviceStatus=%s 
+            WHERE serviceID=%s""", (serviceName, serviceDesc, serviceFee, serviceStatus, serviceID))
+            mysql.connection.commit()
+            cursor.close()
+            flash('Service updated successfully.', 'success')
+            return redirect(url_for('services'))
+        else:
+            return redirect(url_for('services', service=service))
+
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/service/delete/<int:serviceID>', methods=['POST'])
+def delete_service(serviceID):
+    if 'loggedin' in session:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("DELETE FROM services WHERE serviceID = %s", (serviceID,))
+        mysql.connection.commit()
+        cursor.close()
+        flash('Service deleted successfully.', 'success')
+        return redirect(url_for('services'))
+    else:
+        return redirect(url_for('login'))
 if __name__ == '__main__':
     app.run(debug=True)
