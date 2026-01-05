@@ -286,11 +286,11 @@ def invoices():
             invSubtotal = request.form.get('invSubtotal')
             invPaid = request.form.get('invPaid')
             invTotal = request.form.get('invTotal')
-            serviceID = request.form.get('serviceID[]')
-            itemDesc = request.form.get('itemDesc[]')
-            itemQty = request.form.get('itemQty[]')
-            itemPrice = request.form.get('itemPrice[]')
-            itemAmt = request.form.get('itemAmt[]')
+            serviceID = request.form.getlist('serviceID[]')
+            itemDesc = request.form.getlist('itemDesc[]')
+            itemQty = request.form.getlist('itemQty[]')
+            itemPrice = request.form.getlist('itemPrice[]')
+            itemAmt = request.form.getlist('itemAmt[]')
             invStatus = 'Paid' if float(invPaid)>0 else 'Unpaid'
 
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -318,7 +318,6 @@ def invoices():
         return render_template('invoices.html', title=title, invoices=invoices, customers=customers, services=services)
     else:
         return redirect(url_for('login'))
-
 
 if __name__ == '__main__':
     app.run(debug=True)
