@@ -260,24 +260,15 @@ def delete_service(serviceID):
     else:
         return redirect(url_for('login'))
 
+def invNumber(invID):
+    return f"INV-{invID:05d}"
+
 @app.route('/invoices', methods=['GET', 'POST'])
 def invoices():
     if 'loggedin' in session:
         user_id = session['id']
         title = "Invoices"
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT * FROM customers WHERE userID = %s", (user_id,))
-        customers = cursor.fetchall()
-
-        cursor.execute("SELECT * FROM services WHERE userID = %s AND serviceStatus = 'Active'", (user_id,))
-        services = cursor.fetchall()    
-        cursor.execute("""
-        SELECT i.*, c.custName
-        FROM invoices i
-        JOIN customers c ON i.custID = c.custID
-        WHERE i.userID = %s
-        """, (user_id,))
-        invoices = cursor.fetchall()
 
         if request.method == 'POST':
             custID = request.form.get('custID')
@@ -300,6 +291,7 @@ def invoices():
             """, (custID, invDate, invDue, invSubtotal, invPaid, invTotal, invStatus, user_id))
             mysql.connection.commit()
             invID = cursor.lastrowid #get the last inserted row id
+            invoiceNumber = invNumber(invID)
 
             for serviceID, itemDesc, itemQty, itemPrice, itemAmt in zip(serviceID, itemDesc, itemQty, itemPrice, itemAmt):
                 cursor.execute("""
@@ -308,6 +300,7 @@ def invoices():
                 """, (invID, serviceID, itemDesc, itemPrice, itemQty, itemAmt, user_id))    
             mysql.connection.commit()
             cursor.close()
+
             if custID == 'null':
                 flash('Please create or choose customer name', 'warning')
                 return redirect(url_for('invoices'))
@@ -315,7 +308,52 @@ def invoices():
                 flash('Invoice added successfully.', 'success')
                 return redirect(url_for('invoices'))
 
+        cursor.execute("""
+        SELECT i.*, c.custName
+        FROM invoices i
+        JOIN customers c ON i.custID = c.custID
+        WHERE i.userID = %s
+        """, (user_id,))
+        invoices = cursor.fetchall()
+        
+        for row in invoices:
+            row['invoiceNumber'] = invNumber(row['invID'])
+
+        cursor.execute("SELECT * FROM customers WHERE userID = %s", (user_id,))
+        customers = cursor.fetchall()
+
+        cursor.execute("SELECT * FROM services WHERE userID = %s AND serviceStatus = 'Active'", (user_id,))
+        services = cursor.fetchall()    
+            
         return render_template('invoices.html', title=title, invoices=invoices, customers=customers, services=services)
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/invoice/<int:invID>')
+def invoice(invID):
+    if 'loggedin' in session:
+        user_id = session['id']
+        title = "Invoice Details"
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("""
+        SELECT i.*, c.custName, c.custPhone, c.custLocation
+        FROM invoices i
+        JOIN customers c ON i.custID = c.custID
+        WHERE i.invID = %s AND i.userID = %s
+        """, (invID, user_id))
+        invoice = cursor.fetchone()
+
+        cursor.execute("""
+        SELECT it.*, s.serviceName
+        FROM items it
+        JOIN services s ON it.serviceID = s.serviceID
+        WHERE it.invID = %s AND it.userID = %s
+        """, (invID, user_id))
+        items = cursor.fetchall()
+        cursor.close()
+        invoiceNumber = invNumber(invoice['invID'])
+        return render_template('invoice.html', title=title, invoice=invoice, items=items, invoiceNumber=invoiceNumber)
+
     else:
         return redirect(url_for('login'))
 

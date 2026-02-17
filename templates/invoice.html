@@ -1,0 +1,27 @@
+{% extends "layout/layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="card content">
+    <div class="card-header">
+        <div class="row">
+            <div class="col">
+                <h5 class="card-title">
+                    Invoice Details
+                </h5>
+                <h6 class="card-subtitle">
+                    Invoice {{ invoiceNumber }}
+                </h6>
+            </div>
+            <div class="col">
+                <div class="btnmodal">
+                    <button type="button" class="btn btn-warning float-end" data-bs-toggle="modal"
+                        data-bs-target="#addInvoiceModal"><i class="fa-solid fa-plus"></i>Add Invoice</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- Invoice Detail Body -->
+    </div>
+</div>
+{% endblock %}

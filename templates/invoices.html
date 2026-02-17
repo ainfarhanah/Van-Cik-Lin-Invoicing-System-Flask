@@ -25,6 +25,7 @@
             <thead>
                 <tr>
                     <th>#</th>
+                    <th>Invoice Number</th>
                     <th>Customer Name</th>
                     <th>Invoice Date</th>
                     <th>Invoice Created Date</th>
@@ -37,6 +38,7 @@
                 {% for invoice in invoices %}
                 <tr>
                     <td>{{ loop.index }}</td>
+                    <td>{{ invoice.invoiceNumber }}</td>
                     <td>{{ invoice.custName }}</td>
                     <td>{{ invoice.invDate.strftime('%d-%m-%Y') }}</td>
                     <td>{{ invoice.created_at.strftime('%d-%m-%Y') }}</td>
@@ -49,7 +51,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#updateInvoiceModal"><i
+                        <a href="{{ url_for('invoice', invID=invoice.invID) }}"><i
                                 class="fa-solid fa-file-invoice text-secondary"></i></a>
                         <a href="#" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal"><i
                                 class="fa-solid fa-trash text-danger"></i></a>
