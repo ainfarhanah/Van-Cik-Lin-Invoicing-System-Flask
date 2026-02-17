@@ -269,7 +269,7 @@ def invoices():
         cursor.execute("SELECT * FROM customers WHERE userID = %s", (user_id,))
         customers = cursor.fetchall()
 
-        cursor.execute("SELECT * FROM services WHERE userID = %s", (user_id,))
+        cursor.execute("SELECT * FROM services WHERE userID = %s AND serviceStatus = 'Active'", (user_id,))
         services = cursor.fetchall()    
         cursor.execute("""
         SELECT i.*, c.custName
