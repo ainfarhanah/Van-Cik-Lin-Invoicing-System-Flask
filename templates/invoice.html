@@ -13,15 +13,85 @@
                 </h6>
             </div>
             <div class="col">
-                <div class="btnmodal">
-                    <button type="button" class="btn btn-warning float-end" data-bs-toggle="modal"
-                        data-bs-target="#addInvoiceModal"><i class="fa-solid fa-plus"></i>Add Invoice</button>
-                </div>
+                {% if invoice.invStatus != 'Paid' %}
+                <button type="button" class="btn btn-danger ms-auto float-end">
+                    {{invoice.invStatus}} <span class="badge text-bg-light">RM {{invoice.invTotal}}</span>
+                </button>
+                {% else %}
+                <button type="button" class="btn btn-primary ms-auto">
+                    {{invoice.invStatus}} <span class="badge text-bg-light">RM {{invoice.invPaid}}</span>
+                </button>
+                {% endif %}
             </div>
         </div>
     </div>
     <div class="card-body">
-        <!-- Invoice Detail Body -->
+        <div class="row">
+            <div class="col-sm">
+                <label for="Customer"><strong>Customer Name</strong></label>
+                <input type="text" name="custName" class="form-control" value="{{ invoice.custName }}" readonly>
+            </div>
+            <div class="col-sm">
+                <label for="Invoice Date"><strong>Invoice Date</strong></label>
+                <input type="text" name="invDate" class="form-control"
+                    value="{{ invoice.invDate.strftime('%d-%m-%Y') }}" readonly>
+            </div>
+            <div class="col-sm">
+                <label for="Invoice Due Date"><strong>Invoice Due Date</strong></label>
+                <input type="text" name="invDue" class="form-control" value="{{ invoice.invDue.strftime('%d-%m-%Y') }}"
+                    readonly>
+            </div>
+        </div>
+        <table class="table" id="dataTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Service Name</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><input type="text" class="form-control" value="{{ item.serviceName }}" readonly></td>
+                    <td><input type="text" class="form-control" value="{{ item.itemDesc }}" readonly></td>
+                    <td><input type="text" class="form-control" value="{{ item.itemQty }}" readonly></td>
+                    <td><input type="text" class="form-control" value="{{ 'RM %.2f'| format(item.itemPrice) }}"
+                            readonly></td>
+                    <td><input type="text" class="form-control" value="{{ 'RM %.2f'| format(item.itemAmt) }}" readonly
+                            style="font-weight: bold;"> </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col-sm"></div>
+            <div class="col-sm"></div>
+            <div class="col-sm"></div>
+            <div class="col-sm"></div>
+            <div class="col-sm">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Total</span>
+                    <input type="text" class="form-control" value="{{ 'RM %.2f'| format(invoice.invSubtotal) }}"
+                        readonly style="font-weight: bold; text-align: right;">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Total Paid</span>
+                    <input type="text" class="form-control" value="{{ 'RM %.2f'| format(invoice.invPaid) }}" readonly
+                        style="font-weight: bold; text-align: right;">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Total Due</span>
+                    <input type="text" class="form-control" value="{{ 'RM %.2f'| format(invoice.invTotal) }}" readonly
+                        style="font-weight: bold; text-align: right; background-color: ghostwhite;">
+
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
