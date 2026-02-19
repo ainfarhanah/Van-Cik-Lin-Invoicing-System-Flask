@@ -56,7 +56,7 @@
             <tbody>
                 {% for item in items %}
                 <tr>
-                    <td>{{ loop.index }}</td>
+                    <td class="text-center align-middle"><div class="d-flex justify-content-center align-items-center">{{ loop.index }}</div></td>
                     <td><input type="text" class="form-control" value="{{ item.serviceName }}" readonly></td>
                     <td><input type="text" class="form-control" value="{{ item.itemDesc }}" readonly></td>
                     <td><input type="text" class="form-control" value="{{ item.itemQty }}" readonly></td>
@@ -91,6 +91,16 @@
 
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center">
+        <div>
+            <a href="{{url_for('invoices')}}" class="btn btn-secondary">← Back to Invoices</a>
+            <a href="#" class="btn btn-secondary"><i class="fa-solid fa-file-arrow-down"></i> Download Invoice</a>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-secondary"><i class="fa-solid fa-pen-to-square"></i>Edit Invoice</button>
+            <button type="button" class="btn btn-secondary"><i class="fa-solid fa-hand-holding-dollar"></i>Pay Invoice</button>
         </div>
     </div>
 </div>
