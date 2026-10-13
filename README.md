@@ -4,6 +4,8 @@ A web application for managing customers, invoices and payments for a school tra
 ## About the project
 This project replaces manual notebook records with a digital system to simplify billing and payment tracking.
 
+Built for my mother's school transport business, Van Cik Lin.
+
 ## Features
 - Customer management
 - Invoice creation
