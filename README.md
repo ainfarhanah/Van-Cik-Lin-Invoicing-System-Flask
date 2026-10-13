@@ -1,104 +1,29 @@
-# Van Cik Lin Invoicing-System
+# Van Cik Lin Invoicing System
+A web application for managing customers, invoices and payments for a school transport service.
 
-A web based invoicing and payment tracking system built using **Python Flask** and **MySQL** for a small school van service.
+## About the project
+This project replaces manual notebook records with a digital system to simplify billing and payment tracking.
 
-This project was developed as a **personal learning project** to explore web development with Python while solving a real-world problem for my mom's school van service business.
-
-
-## Project Overview
-
-This project helps manage:
-- Customer information
-- Invoice records
+## Features
+- Customer management
+- Invoice creation
 - Payment tracking
-- Basic business insight through a visualization dashboard
-
-Previously, all records were manage manually. This system aims to improve ogranization, reduce errors, and provide clearer visibility of monthly payments and outstanding balances.
-
----
-
-## ERD Diagram
-```mermaid
-erDiagram
-	direction LR
-	USERS{
-		int id  ""  
-		string username  ""  
-		string email  ""  
-		string password  ""  
-		created_at timestamp  ""  
-	}
-
-	CUSTOMERS {
-		int custID  ""  
-		string custName  ""  
-		string custPhone  ""  
-		created_at timestamp  ""  
-	}
-
-
-	SERVICES {
-		int serviceID  ""  
-		string serviceName  ""  
-		string serviceDesc  ""  
-		float serviceFee  ""  
-		created_at timestamp  ""  
-	}
-
-	INVOICES {
-		int invID  ""  
-		date invDate  ""  
-		date invDue  ""  
-		id serviceID  ""  
-		string invDesc  ""  
-		float invAmt  ""  
-		float invPaid  ""  
-		float invTotal  ""  
-		string invStatus  ""  
-		created_at timestamp  ""  
-	}
-
-	ITEMS {
-		int itemID  ""  
-		float itemPrice  ""  
-		int itemQty  ""  
-		float itemAmt  ""  
-		created_at timestamp  ""  
-	}
-
-	PAYMENTS {
-		int paymentID  ""  
-		string paymentMethod  ""  
-		int userID  ""  
-		int invoiceID  ""  
-		created_at timestamp  ""  
-	}
-
-	USERS||--o{CUSTOMERS:"has"
-	USERS||--o{SERVICES:"provides"
-	USERS||--o{INVOICES:"creates"
-	INVOICES||--o{ITEMS:"has"
-	INVOICES||--o{SERVICES:"has"
-	INVOICES||--o{CUSTOMERS:"has"
-	USERS||--o{PAYMENTS:"creates"
-	PAYMENTS||--o{INVOICES:"has"
-	CUSTOMERS||--o{PAYMENTS:"pay"
-```
-
+- PDF invoice download
+- Dashboard with payment summaries
 
 ## Tech Stack
+- Python & Flask
+- MySQL
+- HTML, CSS and Bootstrap
+- Javascript
+- Nginx & Gunicorn
 
-- **Backend**: Python Flask
-- **Database**: MySQL (mysqldb)
-- **Frontend**: HTML, CSS, JavaScript
-- **Charting**: Chart.js
-
-## Key Features
-
-- **User Authentication**: Secure login and registration
-- **Invoice Management**: Create, view, and manage invoices
-- **Payment Tracking**: Track payments and outstanding balances
-- **Dashboard**: Visualize key metrics and trends
-
+## Usage
+1. Log in
+2. Create a service
+3. Add a customer
+4. Create an invoice
+5. Record a payment
+6. Download the invoice PDF
 
 
