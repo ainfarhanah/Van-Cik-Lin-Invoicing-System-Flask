@@ -12,6 +12,7 @@ Built for my mother's school transport business, Van Cik Lin.
 - Payment tracking
 - PDF invoice download
 - Dashboard with payment summaries
+- PDF receipt generation
 
 ## Tech Stack
 - Python & Flask
