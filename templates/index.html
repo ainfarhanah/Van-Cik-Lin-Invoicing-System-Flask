@@ -3,9 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index</title>
+    <title>Register</title>
+    <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
+    <script src="static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
-    <h1>Welcome to the Index Page</h1>
+    <main>
+        <div class="container-fluid">
+            <div class="card">
+                <div class="logo">
+                    <h4 class="title">Login</h4>
+                    <img src="static/images/logo.png" alt="Logo" class="logo-img">
+                </div>
+                <form method="POST" action="">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" name="username" placeholder="Username" required>
+                        <label for="floatingInput">Username</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="floatingInput" name="password"  placeholder="Password" required>
+                        <label for="floatingInput">Password</label>
+                    </div>
+                    <div class="button">
+                        <button type="submit" class="btn btn-warning">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
