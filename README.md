@@ -61,3 +61,8 @@ This project demonstrates the practical application of software development to a
 It combines backend development, relational database management, user interface development, PDF generation, and self-hosted deployment in a single project.
 
 Rather than building only a demonstration application, I developed and developed the system to support an actual family business,allowing improvements to be guided by real operational needs.
+
+## License
+
+This project is licensed under the MIT License.
+See the [LICENSE](LICENSE) file for details.
