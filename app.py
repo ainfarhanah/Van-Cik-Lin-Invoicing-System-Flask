@@ -90,5 +90,13 @@ def dashboard():
         return render_template('dashboard.html', username=session['username'])
     return redirect(url_for('index'))
 
+@app.route('/logout')
+def logout():
+    session.pop('loggedin',None)
+    session.pop('userID',None)
+    session.pop('username',None)
+    flash('You have been logged out', 'success')
+    return redirect(url_for('index'))   
+
 if __name__ == '__main__':
     app.run(debug=True)
