@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template, request, redirect, flash, url_for
+from flask import Flask, render_template, request, redirect, flash, url_for, session
+import MySQLdb.cursors
 from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
@@ -22,32 +23,72 @@ mysql = MySQL(app)
 def index():
     return render_template('index.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if 'loggedin' in session:
+        return redirect(url_for('dashboard'))
+    
+    else:
+        if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+                username = request.form['username']
+                password = request.form['password']
+
+                if not username or not password:
+                    flash('Please enter username and password', 'warning')
+                    return redirect(url_for('index'))
+                
+                cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+                cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
+                user = cursor.fetchone()
+
+                if user and check_password_hash(user['password'], password):
+                    session['loggedin'] = True
+                    session['userID'] = user['userID']
+                    session['username'] = user['username']
+                    flash('Logged in successfully', 'success')
+                    return redirect(url_for('dashboard'))       
+                else:
+                    flash('Incorrect username or password!', 'danger')
+                    return redirect(url_for('index'))
+                
+        return render_template('index.html')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST' and 'username' in request.form and 'email' in request.form and 'password' in request.form:
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
+    if 'loggedin' not in session:
+        if request.method == 'POST' and 'username' in request.form and 'email' in request.form and 'password' in request.form:
+                username = request.form['username']
+                email = request.form['email']
+                password = request.form['password']
 
-        if not username or not email or not password:
-            flash('Please fill out all fields', 'danger')
-            return redirect(url_for('register'))
+                if not username or not email or not password:
+                    flash('Please fill out all fields', 'danger')
+                    return redirect(url_for('register'))
+                
+                cursor = mysql.connection.cursor()
+                cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
+                user = cursor.fetchone()
 
-        cursor = mysql.connection.cursor()
-        cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
-        user = cursor.fetchone()
+                if user:
+                    flash('Username already exists', 'danger')
+                    return redirect(url_for('register'))
+                else:
+                    hash_password = generate_password_hash(password)  # In a real application, you should hash the password before storing it'
+                    cursor.execute('INSERT INTO users (username, email, password) VALUES (%s, %s, %s)', (username, email, hash_password))
+                    mysql.connection.commit()
+                    cursor.close()
+                    flash('You have successfully registered!', 'success')
+                    return redirect(url_for('index'))
+                
+        return render_template('register.html')
+    else:
+        return redirect(url_for('dashboard'))
 
-        if user:
-            flash('Username already exists', 'danger')
-            return redirect(url_for('register'))
-        else:
-            hash_password = generate_password_hash(password)  # In a real application, you should hash the password before storing it'
-            cursor.execute('INSERT INTO users (username, email, password) VALUES (%s, %s, %s)', (username, email, hash_password))
-            mysql.connection.commit()
-            cursor.close()
-            flash('You have successfully registered!', 'success')
-            return redirect(url_for('index'))
-    return render_template('register.html')
+@app.route('/dashboard')
+def dashboard():
+    if 'loggedin' in session:
+        return render_template('dashboard.html', username=session['username'])
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
